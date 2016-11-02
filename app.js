@@ -7,9 +7,10 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const HttpError = require('./error').HttpError;
 
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
+//const passport = require('passport');
+//const LocalStrategy = require('passport-local').Strategy;
+//const GithubStrategy = require('passport-github2').Strategy;
+//const config = require('./config');
 mongoose.connect('mongodb://localhost/test');
 app.use(express.static('app'));
 
@@ -20,12 +21,12 @@ var user = {
     id: 1
 };
 
-passport.serializeUser(function (user, done) {
-    done(null, user.id);
-});
-passport.deserializeUser(function (id, done) {
-    done(null, user);
-});
+// passport.serializeUser(function (user, done) {
+//     done(null, user.id);
+// });
+// passport.deserializeUser(function (id, done) {
+//     done(null, user);
+// });
 
 app.set('views', './src/template');
 app.set('view engine', 'pug');
@@ -49,61 +50,86 @@ app.use(session({
 
 
 // локальная стратегия
-passport.use('loginUsers', new LocalStrategy((username, password, done) => {
-        if (username === user.username && password === user.password) {
-            return done(null, user);
-        } else {
-            return done(null, false);
-        }
-    })
-);
 
+// passport.use('loginUsers', new LocalStrategy((username, password, done) => {
+//         if (username === user.username && password === user.password) {
+//             return done(null, user);
+//         } else {
+//             return done(null, false);
+//         }
+//     })
+// );
 
-app.use(passport.initialize());
-app.use(passport.session());
+// стратегия github
+
+// passport.use(new GithubStrategy({
+//         clientID: config.github.clientID,
+//         clientSecret: config.github.clientSecret,
+//         callbackURL: config.github.callbackURL
+//     },
+//     function(accessToken, refreshToken, profile, done) {
+//         return done(null, profile);
+//     }
+// ));
+
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 
 //Маршруты
 app.get('/', (req, res) => {
     res.render('index', { });
 });
-// app.get('/private', isAuth, function (req, res) {
-//     res.render('private', { });
-// });
-app.get('/private', isLoggedIn, (req, res) => {
+app.get('/private', isAuth, function (req, res) {
     res.render('private', { });
 });
-// app.post('/submit', (req, res) => {
-//     //требуем наличия логина и пароля в теле запроса
-//     if (!req.body.username || !req.body.password) {
-//         //если не указан логин или пароль - сообщаем об этом
-//         return res.json({status: 'Укажите логин и пароль!'});
-//     }
-//     if (req.body.username !== user.username && req.body.password !== user.password) {
-//         res.json({status: 'Логин и/или пароль введены неверно!'});
-//     } else {
-//         //если найден, то делаем пометку об этом в сессии пользователя, который сделал запрос
-//         req.session.isReg = true;
-//         res.json({status: 'Все ок, Добро пожаловать'});
-//     }
+
+// app.get('/private', isLoggedIn, (req, res) => {
+//     res.render('private', { });
 // });
 
-app.post('/submit', (req, res, next) => {
-    passport.authenticate('loginUsers', (err, user) => {
-        if (err) { return next(err); }
-        if (!user) { return res.json({status: 'Укажите логин и пароль!'})}
-        req.logIn(user, function(err) {
-            if (err) { return next(err); }
-            return res.json({status: 'Все ок, Добро пожаловать'});
-        });
-    })(req, res, next);
+app.post('/submit', (req, res) => {
+    //требуем наличия логина и пароля в теле запроса
+    if (!req.body.username || !req.body.password) {
+        //если не указан логин или пароль - сообщаем об этом
+        return res.json({status: 'Укажите логин и пароль!'});
+    }
+    if (req.body.username !== user.username || req.body.password !== user.password) {
+        res.json({status: 'Логин и/или пароль введены неверно!'});
+    } else {
+        //если найден, то делаем пометку об этом в сессии пользователя, который сделал запрос
+        req.session.isReg = true;
+        res.json({status: 'Все ок, Добро пожаловать'});
+    }
 });
+
+
+// app.post('/submit', (req, res, next) => {
+//     passport.authenticate('loginUsers', (err, user) => {
+//         if (err) { return next(err); }
+//         if (!user) { return res.json({status: 'Укажите логин и пароль!'})}
+//         req.logIn(user, function(err) {
+//             if (err) { return next(err); }
+//             return res.json({status: 'Все ок, Добро пожаловать'});
+//         });
+//     })(req, res, next);
+// });
 
 app.post('/del', (req, res) => {
     req.session.destroy();
     res.json({status: 'Сессия удалена'});
 });
 
+
+// app.get('/auth/github',
+//     passport.authenticate('github'),
+//     function(req, res){});
+
+// app.get('/auth/github/callback',
+//     passport.authenticate('github', { failureRedirect: '/' }),
+//     function(req, res) {
+//         res.redirect('/private');
+//     });
 
 
 // запуск сервера
@@ -118,11 +144,12 @@ function isAuth (req, res, next) {
     }
     next();
 }
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    res.sendStatus(401);
-}
+
+// function isLoggedIn(req, res, next) {
+//     if (req.isAuthenticated())
+//         return next();
+//     res.sendStatus(401);
+// }
 
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
