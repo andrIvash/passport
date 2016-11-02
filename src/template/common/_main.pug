@@ -1,2 +1,16 @@
-h1  Hello World
-    p!= message
+h4 Main Page
+p
+    a(href="/private") Secret Page
+
+form(id="form")
+    label(for="username") Name
+    input(type="text" name="username" id="username")
+    label(for="password") Password
+    input(type="text" name="password" id="password")
+    input(type="submit" value="Send")
+    input(type="reset" value="reset")
+
+div.status
+
+
+button.del(type="button") Delete Cookie

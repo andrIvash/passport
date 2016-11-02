@@ -1,4 +1,8 @@
-h1 {
-  color: red; }
+#form {
+  margin-bottom: 20px; }
 
-/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1haW4uc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLFdBQVcsRUFDWiIsImZpbGUiOiJtYWluLmNzcyIsInNvdXJjZXNDb250ZW50IjpbImgxICB7XHJcbiAgY29sb3I6IHJlZDtcclxufSJdfQ== */
+.status {
+  color: red;
+  margin-bottom: 20px; }
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1haW4uc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFDQTtFQUNFLG9CQUFvQixFQUNyQjs7QUFDRDtFQUNFLFdBQVc7RUFDWCxvQkFBb0IsRUFDckIiLCJmaWxlIjoibWFpbi5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyJcbiNmb3JtIHtcbiAgbWFyZ2luLWJvdHRvbTogMjBweDtcbn1cbi5zdGF0dXMge1xuICBjb2xvcjogcmVkO1xuICBtYXJnaW4tYm90dG9tOiAyMHB4O1xufSJdfQ== */
